@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Expense Tracker</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f7fb;
+    color: #222;
+}
+
+.container {
+    max-width: 1000px;
+    margin: auto;
+    padding: 20px;
+}
+
+header {
+    background: white;
+    padding: 25px;
+    text-align: center;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+header h1 {
+    margin-bottom: 8px;
+}
+
+header p {
+    color: #666;
+}
+
+.summary {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.card span {
+    color: #666;
+}
+
+.card h2 {
+    margin-top: 8px;
+}
+
+.form-card,
+.list-card {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+h2 {
+    margin-bottom: 15px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+}
+
+textarea {
+    margin-bottom: 10px;
+    resize: vertical;
+}
+
+button {
+    padding: 11px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.add-btn {
+    background: #2563eb;
+    color: white;
+}
+
+.cancel-btn {
+    background: #777;
+    color: white;
+}
+
+.edit-btn {
+    background: #f59e0b;
+    color: white;
+}
+
+.delete-btn {
+    background: #dc2626;
+    color: white;
+}
+
+.toolbar {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 750px;
+}
+
+th,
+td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+th {
+    background: #f1f5f9;
+}
+
+#message {
+    margin-top: 12px;
+    font-weight: bold;
+}
+
+.empty {
+    text-align: center;
+    padding: 20px;
+    color: #777;
+}
+
+@media(max-width: 650px) {
+
+    .container {
+        padding: 10px;
+    }
+
+    .summary,
+    .form-grid,
+    .toolbar {
+        grid-template-columns: 1fr;
+    }
+
+    header h1 {
+        font-size: 25px;
+    }
+
+    button {
+        margin-top: 5px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+    <h1>💰 Expense Tracker</h1>
+    <p>Manage your daily expenses easily</p>
+</header>
+
+<!-- SUMMARY -->
+
+<div class="summary">
+
+    <div class="card">
+        <span>Total Expenses</span>
+        <h2 id="totalAmount">₹0.00</h2>
+    </div>
+
+    <div class="card">
+        <span>Number of Records</span>
+        <h2 id="recordCount">0</h2>
+    </div>
+
+</div>
+
+<!-- FORM -->
+
+<div class="form-card">
+
+<h2 id="formTitle">➕ Add Expense</h2>
+
+<form id="expenseForm">
+
+<input type="hidden" id="editId">
+
+<div class="form-grid">
+
+<div>
+<label>Title *</label>
+<input type="text" id="title" placeholder="Example: Lunch" required>
+</div>
+
+<div>
+<label>Amount (₹) *</label>
+<input type="number" id="amount" min="0.01" step="0.01" placeholder="100" required>
+</div>
+
+<div>
+<label>Category *</label>
+
+<select id="category" required>
+
+<option value="">Select category</option>
+<option value="Food">🍔 Food</option>
+<option value="Travel">🚌 Travel</option>
+<option value="Education">📚 Education</option>
+<option value="Shopping">🛍️ Shopping</option>
+<option value="Bills">💡 Bills</option>
+<option value="Other">📦 Other</option>
+
+</select>
+
+</div>
+
+<div>
+
+<label>Date *</label>
+
+<input type="date" id="date" required>
+
+</div>
+
+</div>
+
+<br>
+
+<label>Description</label>
+
+<textarea id="description"
+placeholder="Optional description"
+rows="3"></textarea>
+
+<br>
+
+<button type="submit" class="add-btn" id="submitButton">
+Add Expense
+</button>
+
+<button type="button"
+class="cancel-btn"
+id="cancelButton"
+style="display:none;">
+Cancel Edit
+</button>
+
+<p id="message"></p>
+
+</form>
+
+</div>
+
+<!-- EXPENSE LIST -->
+
+<div class="list-card">
+
+<h2>📋 Expense Records</h2>
+
+<div class="toolbar">
+
+<input
+type="text"
+id="search"
+placeholder="🔎 Search by title..."
+>
+
+<select id="filterCategory">
+
+<option value="">All Categories</option>
+<option value="Food">🍔 Food</option>
+<option value="Travel">🚌 Travel</option>
+<option value="Education">📚 Education</option>
+<option value="Shopping">🛍️ Shopping</option>
+<option value="Bills">💡 Bills</option>
+<option value="Other">📦 Other</option>
+
+</select>
+
+</div>
+
+<div class="table-container">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Title</th>
+<th>Amount</th>
+<th>Category</th>
+<th>Date</th>
+<th>Description</th>
+<th>Actions</th>
+
+</tr>
+
+</thead>
+
+<tbody id="expenseTable">
+
+</tbody>
+
+</table>
+
+</div>
+
+<div id="emptyMessage" class="empty">
+No expenses found.
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+let expenses =
+JSON.parse(localStorage.getItem("expenses")) || [];
+
+const form =
+document.getElementById("expenseForm");
+
+const title =
+document.getElementById("title");
+
+const amount =
+document.getElementById("amount");
+
+const category =
+document.getElementById("category");
+
+const date =
+document.getElementById("date");
+
+const description =
+document.getElementById("description");
+
+const editId =
+document.getElementById("editId");
+
+const table =
+document.getElementById("expenseTable");
+
+const totalAmount =
+document.getElementById("totalAmount");
+
+const recordCount =
+document.getElementById("recordCount");
+
+const search =
+document.getElementById("search");
+
+const filterCategory =
+document.getElementById("filterCategory");
+
+const message =
+document.getElementById("message");
+
+const submitButton =
+document.getElementById("submitButton");
+
+const cancelButton =
+document.getElementById("cancelButton");
+
+const formTitle =
+document.getElementById("formTitle");
+
+const emptyMessage =
+document.getElementById("emptyMessage");
+
+
+/* SET TODAY'S DATE */
+
+date.value =
+new Date().toISOString().split("T")[0];
+
+
+/* SAVE DATA */
+
+function saveExpenses() {
+
+localStorage.setItem(
+"expenses",
+JSON.stringify(expenses)
+);
+
+}
+
+
+/* DISPLAY EXPENSES */
+
+function displayExpenses() {
+
+table.innerHTML = "";
+
+let searchText =
+search.value.toLowerCase();
+
+let selectedCategory =
+filterCategory.value;
+
+let filtered =
+expenses.filter(function(expense) {
+
+let matchesSearch =
+expense.title
+.toLowerCase()
+.includes(searchText);
+
+let matchesCategory =
+selectedCategory === "" ||
+expense.category === selectedCategory;
+
+return matchesSearch && matchesCategory;
+
+});
+
+
+/* TOTAL */
+
+let total = filtered.reduce(
+(sum, expense) =>
+sum + Number(expense.amount),
+0
+);
+
+totalAmount.textContent =
+"₹" + total.toFixed(2);
+
+recordCount.textContent =
+filtered.length;
+
+
+/* EMPTY */
+
+if(filtered.length === 0) {
+
+emptyMessage.style.display = "block";
+
+} else {
+
+emptyMessage.style.display = "none";
+
+}
+
+
+/* TABLE */
+
+filtered.forEach(function(expense) {
+
+let row =
+document.createElement("tr");
+
+row.innerHTML = `
+
+<td>${escapeHTML(expense.title)}</td>
+
+<td>₹${Number(expense.amount).toFixed(2)}</td>
+
+<td>${escapeHTML(expense.category)}</td>
+
+<td>${expense.date}</td>
+
+<td>${escapeHTML(expense.description || "-")}</td>
+
+<td>
+
+<button
+class="edit-btn"
+onclick="editExpense(${expense.id})">
+Edit
+</button>
+
+<button
+class="delete-btn"
+onclick="deleteExpense(${expense.id})">
+Delete
+</button>
+
+</td>
+
+`;
+
+table.appendChild(row);
+
+});
+
+}
+
+
+/* ADD / UPDATE */
+
+form.addEventListener(
+"submit",
+function(event) {
+
+event.preventDefault();
+
+let titleValue =
+title.value.trim();
+
+let amountValue =
+Number(amount.value);
+
+let categoryValue =
+category.value;
+
+let dateValue =
+date.value;
+
+let descriptionValue =
+description.value.trim();
+
+
+/* VALIDATION */
+
+if(titleValue === "") {
+
+showMessage(
+"❌ Title is required.",
+true
+);
+
+return;
+
+}
+
+if(amountValue <= 0 || isNaN(amountValue)) {
+
+showMessage(
+"❌ Amount must be greater than 0.",
+true
+);
+
+return;
+
+}
+
+if(categoryValue === "") {
+
+showMessage(
+"❌ Please select a category.",
+true
+);
+
+return;
+
+}
+
+if(dateValue === "") {
+
+showMessage(
+"❌ Please select a date.",
+true
+);
+
+return;
+
+}
+
+
+/* UPDATE */
+
+if(editId.value !== "") {
+
+let id =
+Number(editId.value);
+
+let expense =
+expenses.find(
+e => e.id === id
+);
+
+expense.title =
+titleValue;
+
+expense.amount =
+amountValue;
+
+expense.category =
+categoryValue;
+
+expense.date =
+dateValue;
+
+expense.description =
+descriptionValue;
+
+showMessage(
+"✅ Expense updated successfully!"
+);
+
+}
+
+/* CREATE */
+
+else {
+
+let newExpense = {
+
+id: Date.now(),
+
+title: titleValue,
+
+amount: amountValue,
+
+category: categoryValue,
+
+date: dateValue,
+
+description: descriptionValue
+
+};
+
+expenses.push(newExpense);
+
+showMessage(
+"✅ Expense added successfully!"
+);
+
+}
+
+
+saveExpenses();
+
+displayExpenses();
+
+resetForm();
+
+});
+
+
+/* EDIT */
+
+function editExpense(id) {
+
+let expense =
+expenses.find(
+e => e.id === id
+);
+
+if(!expense) return;
+
+editId.value =
+expense.id;
+
+title.value =
+expense.title;
+
+amount.value =
+expense.amount;
+
+category.value =
+expense.category;
+
+date.value =
+expense.date;
+
+description.value =
+expense.description;
+
+formTitle.textContent =
+"✏️ Edit Expense";
+
+submitButton.textContent =
+"Update Expense";
+
+cancelButton.style.display =
+"inline-block";
+
+window.scrollTo({
+top: 0,
+behavior: "smooth"
+});
+
+}
+
+
+/* DELETE */
+
+function deleteExpense(id) {
+
+let confirmDelete =
+confirm(
+"Are you sure you want to delete this expense?"
+);
+
+if(!confirmDelete) return;
+
+expenses =
+expenses.filter(
+expense =>
+expense.id !== id
+);
+
+saveExpenses();
+
+displayExpenses();
+
+showMessage(
+"✅ Expense deleted successfully!"
+);
+
+}
+
+
+/* RESET */
+
+function resetForm() {
+
+form.reset();
+
+editId.value = "";
+
+formTitle.textContent =
+"➕ Add Expense";
+
+submitButton.textContent =
+"Add Expense";
+
+cancelButton.style.display =
+"none";
+
+date.value =
+new Date().toISOString().split("T")[0];
+
+}
+
+
+/* CANCEL */
+
+cancelButton.addEventListener(
+"click",
+function() {
+
+resetForm();
+
+}
+);
+
+
+/* SEARCH */
+
+search.addEventListener(
+"input",
+displayExpenses
+);
+
+
+/* FILTER */
+
+filterCategory.addEventListener(
+"change",
+displayExpenses
+);
+
+
+/* MESSAGE */
+
+function showMessage(
+text,
+error = false
+) {
+
+message.textContent =
+text;
+
+message.style.color =
+error ? "#dc2626" : "#16a34a";
+
+setTimeout(
+function() {
+
+message.textContent = "";
+
+},
+3000
+);
+
+}
+
+
+/* SECURITY */
+
+function escapeHTML(text) {
+
+return String(text)
+
+.replaceAll("&", "&amp;")
+
+.replaceAll("<", "&lt;")
+
+.replaceAll(">", "&gt;")
+
+.replaceAll('"', "&quot;")
+
+.replaceAll("'", "&#039;");
+
+}
+
+
+/* FIRST LOAD */
+
+displayExpenses();
+
+</script>
+
+</body>
+  </html>
+
+
+
